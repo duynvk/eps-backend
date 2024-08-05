@@ -1,7 +1,37 @@
 const express = require('express');
 const Team = require("../models/teamModel");
 const Member = require('../models/memberModel');
+const User = require('../models/userModel');
+const auth = require('../middlewares/authMiddleware');
 const router = express.Router();
+
+router.get('/teams', async (req, res) => {
+  try {
+      // Lấy group_id của user từ thông tin xác thực
+      const userGroupId = req.user.group_id;
+
+      if (!userGroupId) {
+          return res.status(400).json({ message: "User không thuộc về bất kỳ group nào" });
+      }
+
+      // Tìm tất cả các team thuộc group của user
+      const teams = await Team.find({ group_id: userGroupId })
+          .select('_id name total_score avg_score member_count')
+          .sort({ name: 1 }); // Sắp xếp theo tên
+
+      if (teams.length === 0) {
+          return res.status(404).json({ message: "Không tìm thấy team nào trong group của user" });
+      }
+
+      res.status(200).json({
+          message: "Danh sách các team trong group của user",
+          teams: teams
+      });
+  } catch (error) {
+      console.error('Error in get teams of user group route:', error);
+      res.status(500).json({ message: "Lỗi server", error: error.message });
+  }
+});
 
 router.get('/teams/:groupId', async (req, res) => {
     const { groupId } = req.params;

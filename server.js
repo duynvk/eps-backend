@@ -12,9 +12,11 @@ const cors = require("cors");
 const app = express();
 
 const corsOptions = {
-  origin: ["https://duynvk.github.io"],
+  origin: ['http://localhost:3000', 'http://14.225.255.42:3000'],
   credentials: true, //access-control-allow-credentials:true
   optionSuccessStatus: 200,
+  methods: 'GET,POST,PUT,DELETE',
+  allowedHeaders: 'Content-Type,Authorization',
 };
 app.use(cors(corsOptions));
 

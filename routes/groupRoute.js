@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Group = require('../models/groupModel');
+const auth = require('../middlewares/authMiddleware');
 
 // Route để lấy danh sách các nhóm
 router.get('/groups', async (req, res) => {
@@ -11,6 +12,13 @@ router.get('/groups', async (req, res) => {
       res.status(500).json({ message: error.message });
     }
   });
+
+//Route to get group name
+router.get('/groups/me', auth, async(req, res) => {
+    // View logged in user profile
+    res.send(req.group.name)
+    console.log(req.group.name)
+})
 
 // API cập nhật số lượng thành viên cho tất cả các nhóm
 router.put('/groups/update-member-count', async (req, res) => {

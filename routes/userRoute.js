@@ -4,6 +4,21 @@ const auth = require('../middlewares/authMiddleware')
 
 const router = express.Router()
 
+// Get group_id of the user
+router.get('/users/:id/group', async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id).populate('group_id');
+        
+        if (!user) {
+            return res.status(404).send({ error: 'User not found' });
+        }
+
+        res.send({ group_id: user.group_id });
+    } catch (error) {
+        res.status(500).send({ error: 'Server error' });
+    }
+});
+
 router.post('/users', async (req, res) => {
     // Create a new user
     try {
